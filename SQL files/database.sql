@@ -54,7 +54,7 @@ CREATE TABLE `orderdetails` (
   `orderNumber` int(11) NOT NULL,
   `productNumber` int(11) NOT NULL,
   `quantity` int(11) DEFAULT NULL,
-  `priceEach` int(11) DEFAULT NULL,
+  `priceEach` double DEFAULT NULL,
   PRIMARY KEY (`orderNumber`,`productNumber`),
   KEY `fk_orderDetails_orders1_idx` (`orderNumber`),
   KEY `fk_orderDetails_products1_idx` (`productNumber`),
@@ -69,6 +69,7 @@ CREATE TABLE `orderdetails` (
 
 LOCK TABLES `orderdetails` WRITE;
 /*!40000 ALTER TABLE `orderdetails` DISABLE KEYS */;
+INSERT INTO `orderdetails` VALUES (1,2,7,7),(1,4,6,4),(2,1,21,5),(2,2,22,7),(2,3,3,5),(3,2,28,7),(3,4,10,4),(4,3,12,4),(5,4,25,4),(6,4,15,4),(9,1,4,5),(9,2,2,7),(9,3,11,4),(9,4,11,4),(10,4,24,4),(11,2,13,7),(12,1,30,5),(12,3,25,4),(13,1,22,5),(13,2,3,7),(14,2,8,7),(15,1,14,5),(15,2,24,7),(15,4,13,4),(16,1,21,5),(16,3,17,4),(17,2,4,7),(17,3,3,4),(18,1,7,5),(18,3,2,4),(19,1,11,5),(19,3,13,4),(20,2,4,7),(20,3,1,4);
 /*!40000 ALTER TABLE `orderdetails` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -88,7 +89,7 @@ CREATE TABLE `orders` (
   PRIMARY KEY (`orderNumber`),
   KEY `UserID_idx` (`userID`),
   CONSTRAINT `UserID` FOREIGN KEY (`userID`) REFERENCES `users` (`userID`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_swedish_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_swedish_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -97,6 +98,7 @@ CREATE TABLE `orders` (
 
 LOCK TABLES `orders` WRITE;
 /*!40000 ALTER TABLE `orders` DISABLE KEYS */;
+INSERT INTO `orders` VALUES (1,'2017-06-17','SHIPPED','2017-06-19',13),(2,'2017-08-05','SHIPPED','2017-08-06',6),(3,'2017-06-05','SHIPPED','2017-06-07',6),(4,'2017-06-25','SHIPPED','2017-06-28',6),(5,'2017-04-27','SHIPPED','2017-04-28',11),(6,'2017-07-11','SHIPPED','2017-07-12',12),(7,'2017-09-04','SHIPPED','2017-09-06',10),(8,'2017-07-02','SHIPPED','2017-07-03',10),(9,'2018-01-10','SHIPPED','2018-01-11',13),(10,'2018-02-10','SHIPPED','2018-02-11',11),(11,'2017-04-03','SHIPPED','2017-04-06',5),(12,'2017-11-15','SHIPPED','2017-11-16',9),(13,'2017-11-10','SHIPPED','2017-11-12',7),(14,'2017-04-12','SHIPPED','2017-04-13',13),(15,'2017-09-06','SHIPPED','2017-09-09',11),(16,'2017-05-12','SHIPPED','2017-05-13',8),(17,'2017-06-06','SHIPPED','2017-06-09',11),(18,'2017-04-08','SHIPPED','2017-04-10',11),(19,'2017-07-08','SHIPPED','2017-07-09',5),(20,'2017-07-02','SHIPPED','2017-07-04',10);
 /*!40000 ALTER TABLE `orders` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -251,4 +253,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-03-26 15:24:01
+-- Dump completed on 2018-03-28 16:14:59
