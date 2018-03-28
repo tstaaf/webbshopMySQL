@@ -140,10 +140,11 @@ CREATE TABLE `products` (
   `productNumber` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(45) COLLATE utf8mb4_swedish_ci DEFAULT NULL,
   `price` double DEFAULT NULL,
-  `supplier_supplierID` int(11) NOT NULL,
+  `supplierID` int(11) NOT NULL,
+  `quantityInStock` int(11) DEFAULT NULL,
   PRIMARY KEY (`productNumber`),
-  KEY `fk_products_supplier1_idx` (`supplier_supplierID`),
-  CONSTRAINT `fk_products_supplier1` FOREIGN KEY (`supplier_supplierID`) REFERENCES `supplier` (`supplierID`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  KEY `fk_products_supplier1_idx` (`supplierID`),
+  CONSTRAINT `fk_products_supplier1` FOREIGN KEY (`supplierID`) REFERENCES `supplier` (`supplierID`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_swedish_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -153,7 +154,7 @@ CREATE TABLE `products` (
 
 LOCK TABLES `products` WRITE;
 /*!40000 ALTER TABLE `products` DISABLE KEYS */;
-INSERT INTO `products` VALUES (1,'Banana',5,1),(2,'Banana (Eco)',7,1),(3,'Granny Smith',4,2),(4,'Golden Delicious',4,2);
+INSERT INTO `products` VALUES (1,'Banana',5,1,46),(2,'Banana (Eco)',7,1,84),(3,'Granny Smith',4,2,121),(4,'Golden Delicious',4,2,108);
 /*!40000 ALTER TABLE `products` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -243,6 +244,106 @@ LOCK TABLES `users` WRITE;
 INSERT INTO `users` VALUES (1,'Helge','Hjerpe',5,'helge.hjerpe@mailinator.com','f9~SE4|;',1),(2,'Antonia','Mattiasson',6,'antonia.mattiasson@mailinater.com','~{X(3n)/',2),(3,'Signar','Sigfridsson',7,'signar.sigfridsson@mailmetrash.com','qPP{#Rj@',2),(4,'Peter','Sunesson',8,'peter.sunesson@dodgit.com','!XES7KGW',2),(5,'Lorentz','Bratt',9,'lorentz.bratt@dodgit.com','2C~3||x',2),(6,'Robin','Norström',7,'robin.norstrom@spamherelots.com',';/gwW&RJ',2),(7,'Vivan','Broberg',8,'vivan.broberg@spamherelots.com','9+P^3b=$',2),(8,'Andrea','Ferm',8,'andrea.ferm@dodgit.com','8/Bv{5mX',2),(9,'Margareth','Dahlin',7,'margareth.dahlin@mailinator.com','WvFi1=,:',2),(10,'Michael','Strömbäck',8,'michael.stromback@mailinator.com','=cq6OyeM',2),(11,'Vivan','Classon',9,'vivan.classon@mailinator.com','z@xVf9Eu',2),(12,'Ann-Christin','Hultqvist',6,'annchristin.hultqvist@mailinator.com','.){(Fd%$',2),(13,'Gärd','Rosengren',6,'gard.rosengren@dodgit.com','vOOkH/x%',2);
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Temporary view structure for view `vw_usertotalordered`
+--
+
+DROP TABLE IF EXISTS `vw_usertotalordered`;
+/*!50001 DROP VIEW IF EXISTS `vw_usertotalordered`*/;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+/*!50001 CREATE VIEW `vw_usertotalordered` AS SELECT 
+ 1 AS `Name`,
+ 1 AS `NoOfOrders`,
+ 1 AS `TotalOrdersValue`,
+ 1 AS `AvgOrderValue`,
+ 1 AS `LastOrderDate`*/;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Temporary view structure for view `vw_viewallproducts`
+--
+
+DROP TABLE IF EXISTS `vw_viewallproducts`;
+/*!50001 DROP VIEW IF EXISTS `vw_viewallproducts`*/;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+/*!50001 CREATE VIEW `vw_viewallproducts` AS SELECT 
+ 1 AS `ProductName`,
+ 1 AS `Price`,
+ 1 AS `QuantityInStock`,
+ 1 AS `SupplierName`*/;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Temporary view structure for view `vw_viewproductslowstock`
+--
+
+DROP TABLE IF EXISTS `vw_viewproductslowstock`;
+/*!50001 DROP VIEW IF EXISTS `vw_viewproductslowstock`*/;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+/*!50001 CREATE VIEW `vw_viewproductslowstock` AS SELECT 
+ 1 AS `ProductName`,
+ 1 AS `Price`,
+ 1 AS `QuantityInStock`,
+ 1 AS `SupplierName`*/;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Final view structure for view `vw_usertotalordered`
+--
+
+/*!50001 DROP VIEW IF EXISTS `vw_usertotalordered`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8 */;
+/*!50001 SET character_set_results     = utf8 */;
+/*!50001 SET collation_connection      = utf8_general_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `vw_usertotalordered` AS select concat(`u`.`FirstName`,' ',`u`.`LastName`) AS `Name`,count(`o`.`orderNumber`) AS `NoOfOrders`,format(sum((`od`.`quantity` * `od`.`priceEach`)),2) AS `TotalOrdersValue`,format((sum((`od`.`quantity` * `od`.`priceEach`)) / count(`o`.`orderNumber`)),2) AS `AvgOrderValue`,max(`o`.`orderDate`) AS `LastOrderDate` from ((`users` `u` left join `orders` `o` on((`u`.`userID` = `o`.`userID`))) left join `orderdetails` `od` on((`o`.`orderNumber` = `od`.`orderNumber`))) group by `u`.`userID` order by `NoOfOrders` desc */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+
+--
+-- Final view structure for view `vw_viewallproducts`
+--
+
+/*!50001 DROP VIEW IF EXISTS `vw_viewallproducts`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8 */;
+/*!50001 SET character_set_results     = utf8 */;
+/*!50001 SET collation_connection      = utf8_general_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `vw_viewallproducts` AS select `p`.`name` AS `ProductName`,`p`.`price` AS `Price`,`p`.`quantityInStock` AS `QuantityInStock`,`s`.`name` AS `SupplierName` from (`products` `p` left join `supplier` `s` on((`p`.`supplierID` = `s`.`supplierID`))) */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+
+--
+-- Final view structure for view `vw_viewproductslowstock`
+--
+
+/*!50001 DROP VIEW IF EXISTS `vw_viewproductslowstock`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8 */;
+/*!50001 SET character_set_results     = utf8 */;
+/*!50001 SET collation_connection      = utf8_general_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `vw_viewproductslowstock` AS select `p`.`name` AS `ProductName`,`p`.`price` AS `Price`,`p`.`quantityInStock` AS `QuantityInStock`,`s`.`name` AS `SupplierName` from (`products` `p` left join `supplier` `s` on((`p`.`supplierID` = `s`.`supplierID`))) where (`p`.`quantityInStock` < 50) */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -253,4 +354,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-03-28 16:14:59
+-- Dump completed on 2018-03-28 16:54:33
