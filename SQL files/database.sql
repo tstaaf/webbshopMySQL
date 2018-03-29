@@ -1,3 +1,5 @@
+CREATE DATABASE  IF NOT EXISTS `grupparbete` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_swedish_ci */;
+USE `grupparbete`;
 -- MySQL dump 10.13  Distrib 5.7.17, for Win64 (x86_64)
 --
 -- Host: 127.0.0.1    Database: grupparbete
@@ -51,17 +53,16 @@ DROP TABLE IF EXISTS `orderdetails`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `orderdetails` (
-  `orderRowNr` int(11) NOT NULL AUTO_INCREMENT,
   `orderNumber` int(11) NOT NULL,
   `productNumber` int(11) DEFAULT NULL,
   `quantity` int(11) DEFAULT NULL,
   `priceEach` double DEFAULT NULL,
-  PRIMARY KEY (`orderRowNr`,`orderNumber`),
+  PRIMARY KEY (`orderNumber`,`productNumber`),
   KEY `fk_orderDetails_orders1_idx` (`orderNumber`),
   KEY `fk_orderDetails_products1_idx` (`productNumber`),
   CONSTRAINT `fk_orderDetails_orders1` FOREIGN KEY (`orderNumber`) REFERENCES `orders` (`orderNumber`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_orderDetails_products1` FOREIGN KEY (`productNumber`) REFERENCES `products` (`productNumber`) ON DELETE NO ACTION ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=35 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_swedish_ci;
+  CONSTRAINT `fk_orderDetails_products1` FOREIGN KEY (`productNumber`) REFERENCES `products` (`productNumber`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_swedish_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -70,7 +71,7 @@ CREATE TABLE `orderdetails` (
 
 LOCK TABLES `orderdetails` WRITE;
 /*!40000 ALTER TABLE `orderdetails` DISABLE KEYS */;
-INSERT INTO `orderdetails` VALUES (1,1,2,7,7),(2,1,4,6,4),(3,2,1,21,5),(4,2,2,22,7),(5,2,3,3,5),(6,3,2,28,7),(7,3,4,10,4),(8,4,3,12,4),(9,5,4,25,4),(10,6,4,15,4),(11,9,1,4,5),(12,9,2,2,7),(13,9,3,11,4),(14,9,4,11,4),(15,10,4,24,4),(16,11,2,13,7),(17,12,1,30,5),(18,12,3,25,4),(19,13,1,22,5),(20,13,2,3,7),(21,14,2,8,7),(22,15,1,14,5),(23,15,2,24,7),(24,15,4,13,4),(25,16,1,21,5),(26,16,3,17,4),(27,17,2,4,7),(28,17,3,3,4),(29,18,1,7,5),(30,18,3,2,4),(31,19,1,11,5),(32,19,3,13,4),(33,20,2,4,7),(34,20,3,1,4);
+INSERT INTO `orderdetails` VALUES (1,2,7,7),(1,4,6,4),(2,1,21,5),(2,2,22,7),(2,3,3,5),(3,2,28,7),(3,4,10,4),(4,3,12,4),(5,4,25,4),(6,4,15,4),(9,1,4,5),(9,2,2,7),(9,3,11,4),(9,4,11,4),(10,4,24,4),(11,2,13,7),(12,1,30,5),(12,3,25,4),(13,1,22,5),(13,2,3,7),(14,2,8,7),(15,1,14,5),(15,2,24,7),(15,4,13,4),(16,1,21,5),(16,3,17,4),(17,2,4,7),(17,3,3,4),(18,1,7,5),(18,3,2,4),(19,1,11,5),(19,3,13,4),(20,2,4,7),(20,3,1,4);
 /*!40000 ALTER TABLE `orderdetails` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -118,7 +119,7 @@ CREATE TABLE `payments` (
   PRIMARY KEY (`paymentID`),
   KEY `fk_payments_orders1_idx` (`orders_orderNumber`),
   CONSTRAINT `fk_payments_orders1` FOREIGN KEY (`orders_orderNumber`) REFERENCES `orders` (`orderNumber`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_swedish_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_swedish_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -127,6 +128,7 @@ CREATE TABLE `payments` (
 
 LOCK TABLES `payments` WRITE;
 /*!40000 ALTER TABLE `payments` DISABLE KEYS */;
+INSERT INTO `payments` VALUES (1,NULL,40,4);
 /*!40000 ALTER TABLE `payments` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -146,7 +148,7 @@ CREATE TABLE `products` (
   PRIMARY KEY (`productNumber`),
   KEY `fk_products_supplier1_idx` (`supplierID`),
   CONSTRAINT `fk_products_supplier1` FOREIGN KEY (`supplierID`) REFERENCES `supplier` (`supplierID`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_swedish_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_swedish_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -155,7 +157,7 @@ CREATE TABLE `products` (
 
 LOCK TABLES `products` WRITE;
 /*!40000 ALTER TABLE `products` DISABLE KEYS */;
-INSERT INTO `products` VALUES (1,'Banana',5,1,46),(2,'Banana (Eco)',7,1,84),(3,'Granny Smith',4,2,121),(4,'Golden Delicious',4,2,108),(6,'Pineapple',15,3,100),(7,'Fine Pineapples',10,3,100);
+INSERT INTO `products` VALUES (1,'Banana',5,1,46),(2,'Banana (Eco)',7,1,84),(3,'Granny Smith',4,2,121),(4,'Golden Delicious',4,2,108),(5,'Royal Gala',2,2,399);
 /*!40000 ALTER TABLE `products` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -303,7 +305,7 @@ SET character_set_client = @saved_cs_client;
 /*!50003 SET character_set_results = utf8 */ ;
 /*!50003 SET collation_connection  = utf8_general_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+/*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_AddProduct`(
 	p_name VARCHAR(45),
@@ -312,7 +314,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_AddProduct`(
     p_quantityinstock INT
 )
 BEGIN
-INSERT INTO products (`name`, `price`, `supplierId`, `quantityinstock`)
+INSERT INTO products (`name`, `price`, `supplierID`, `quantityinstock`)
 VALUES (p_name, p_price, p_supplier, p_quantityinstock);
 END ;;
 DELIMITER ;
@@ -356,10 +358,9 @@ DELIMITER ;
 /*!50003 SET character_set_results = utf8 */ ;
 /*!50003 SET collation_connection  = utf8_general_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+/*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_RemoveProduct`(
-IN p_productNumber INT)
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_RemoveProduct`(IN Order_ID INT)
 BEGIN
 SET SQL_SAFE_UPDATES=0;
 DELETE
@@ -372,7 +373,7 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 DROP PROCEDURE IF EXISTS `sp_ViewOrdersAbove` */;
+/*!50003 DROP PROCEDURE IF EXISTS `sp_ViewOrderPayment` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
@@ -380,21 +381,22 @@ DELIMITER ;
 /*!50003 SET character_set_results = utf8 */ ;
 /*!50003 SET collation_connection  = utf8_general_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+/*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
 DELIMITER ;;
-CREATE DEFINER=`Linghult`@`%` PROCEDURE `sp_ViewOrdersAbove`(
-IN p_orderCost INT)
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_ViewOrderPayment`(IN Order_ID INT)
 BEGIN
-SELECT *
-FROM orderDetails
-HAVING quantity*pricEeach >= p_orderCost;
+SELECT t0.userID, t0.orderNumber, t0.orderDate, t0.shippedDate, SUM(t1.priceEach * t1.quantity) AS Total, t2.amount AS Payed FROM orders t0
+INNER JOIN orderdetails t1 ON t1.orderNumber = t0.orderNumber
+INNER JOIN payments t2 ON t2.orders_orderNumber = t0.orderNumber
+WHERE t0.orderNumber = Order_ID AND (t1.priceEach * t1.quantity) > t2.amount
+GROUP BY UserID;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 DROP PROCEDURE IF EXISTS `sp_ViewOrdersPerCost` */;
+/*!50003 DROP PROCEDURE IF EXISTS `sp_ViewUserContactInfo` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
@@ -402,14 +404,13 @@ DELIMITER ;
 /*!50003 SET character_set_results = utf8 */ ;
 /*!50003 SET collation_connection  = utf8_general_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+/*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
 DELIMITER ;;
-CREATE DEFINER=`Linghult`@`%` PROCEDURE `sp_ViewOrdersPerCost`(
-IN p_orderCost INT)
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_ViewUserContactInfo`(IN ID INT)
 BEGIN
-SELECT *
-FROM orderDetails
-HAVING quantity*pricEeach >= p_orderCost;
+SELECT UserID, FirstName, LastName, RoleID, Email, t1.streetAddress, t1.zipCode, t1.city, t1.State, t1.Country FROM users t0
+INNER JOIN addresses t1 ON t1.addressID = t0.AddressID
+WHERE UserID = ID;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -519,4 +520,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-03-29 11:34:50
+-- Dump completed on 2018-03-29 11:42:54
