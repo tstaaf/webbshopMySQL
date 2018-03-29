@@ -1,5 +1,3 @@
-CREATE DATABASE  IF NOT EXISTS `grupparbete` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_swedish_ci */;
-USE `grupparbete`;
 -- MySQL dump 10.13  Distrib 5.7.17, for Win64 (x86_64)
 --
 -- Host: 127.0.0.1    Database: grupparbete
@@ -62,7 +60,7 @@ CREATE TABLE `orderdetails` (
   KEY `fk_orderDetails_orders1_idx` (`orderNumber`),
   KEY `fk_orderDetails_products1_idx` (`productNumber`),
   CONSTRAINT `fk_orderDetails_orders1` FOREIGN KEY (`orderNumber`) REFERENCES `orders` (`orderNumber`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_orderDetails_products1` FOREIGN KEY (`productNumber`) REFERENCES `products` (`productNumber`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  CONSTRAINT `fk_orderDetails_products1` FOREIGN KEY (`productNumber`) REFERENCES `products` (`productNumber`) ON DELETE NO ACTION ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=35 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_swedish_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -148,7 +146,7 @@ CREATE TABLE `products` (
   PRIMARY KEY (`productNumber`),
   KEY `fk_products_supplier1_idx` (`supplierID`),
   CONSTRAINT `fk_products_supplier1` FOREIGN KEY (`supplierID`) REFERENCES `supplier` (`supplierID`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_swedish_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_swedish_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -157,7 +155,7 @@ CREATE TABLE `products` (
 
 LOCK TABLES `products` WRITE;
 /*!40000 ALTER TABLE `products` DISABLE KEYS */;
-INSERT INTO `products` VALUES (1,'Banana',5,1,46),(2,'Banana (Eco)',7,1,84),(3,'Granny Smith',4,2,121),(4,'Golden Delicious',4,2,108);
+INSERT INTO `products` VALUES (1,'Banana',5,1,46),(2,'Banana (Eco)',7,1,84),(3,'Granny Smith',4,2,121),(4,'Golden Delicious',4,2,108),(6,'Pineapple',15,3,100),(7,'Fine Pineapples',10,3,100);
 /*!40000 ALTER TABLE `products` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -256,7 +254,7 @@ DROP TABLE IF EXISTS `vw_usertotalordered`;
 /*!50001 DROP VIEW IF EXISTS `vw_usertotalordered`*/;
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;
-/*!50001 CREATE VIEW `vw_usertotalordered` AS SELECT 
+/*!50001 CREATE VIEW `vw_usertotalordered` AS SELECT
  1 AS `Name`,
  1 AS `NoOfOrders`,
  1 AS `TotalOrdersValue`,
@@ -272,7 +270,7 @@ DROP TABLE IF EXISTS `vw_viewallproducts`;
 /*!50001 DROP VIEW IF EXISTS `vw_viewallproducts`*/;
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;
-/*!50001 CREATE VIEW `vw_viewallproducts` AS SELECT 
+/*!50001 CREATE VIEW `vw_viewallproducts` AS SELECT
  1 AS `ProductName`,
  1 AS `Price`,
  1 AS `QuantityInStock`,
@@ -287,16 +285,12 @@ DROP TABLE IF EXISTS `vw_viewproductslowstock`;
 /*!50001 DROP VIEW IF EXISTS `vw_viewproductslowstock`*/;
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;
-/*!50001 CREATE VIEW `vw_viewproductslowstock` AS SELECT 
+/*!50001 CREATE VIEW `vw_viewproductslowstock` AS SELECT
  1 AS `ProductName`,
  1 AS `Price`,
  1 AS `QuantityInStock`,
  1 AS `SupplierName`*/;
 SET character_set_client = @saved_cs_client;
-
---
--- Dumping events for database 'grupparbete'
---
 
 --
 -- Dumping routines for database 'grupparbete'
@@ -318,7 +312,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_AddProduct`(
     p_quantityinstock INT
 )
 BEGIN
-INSERT INTO products (`name`, `price`, `supplier`, `quantityinstock`)
+INSERT INTO products (`name`, `price`, `supplierId`, `quantityinstock`)
 VALUES (p_name, p_price, p_supplier, p_quantityinstock);
 END ;;
 DELIMITER ;
@@ -346,8 +340,76 @@ SET p_response = FALSE;
 IF (SELECT COUNT(*) FROM users
 	WHERE Email = p_email
     AND `Password` = p_password) = 1
-THEN SET p_response = TRUE; 
+THEN SET p_response = TRUE;
 END IF;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `sp_RemoveProduct` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_RemoveProduct`(
+IN p_productNumber INT)
+BEGIN
+SET SQL_SAFE_UPDATES=0;
+DELETE
+FROM products
+Where p_productNumber = productNumber;
+SET SQL_SAFE_UPDATES=1;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `sp_ViewOrdersAbove` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`Linghult`@`%` PROCEDURE `sp_ViewOrdersAbove`(
+IN p_orderCost INT)
+BEGIN
+SELECT *
+FROM orderDetails
+HAVING quantity*pricEeach >= p_orderCost;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `sp_ViewOrdersPerCost` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`Linghult`@`%` PROCEDURE `sp_ViewOrdersPerCost`(
+IN p_orderCost INT)
+BEGIN
+SELECT *
+FROM orderDetails
+HAVING quantity*pricEeach >= p_orderCost;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -368,7 +430,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_ViewUsersOrders`(
 	p_userID INT
 )
 BEGIN
-SELECT 
+SELECT
 	`t0`.`userID` AS `userID`,
 	`t0`.`orderNumber` AS `orderNumber`,
 	`t0`.`orderDate` AS `orderDate`,
