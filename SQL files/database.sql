@@ -1,3 +1,5 @@
+CREATE DATABASE  IF NOT EXISTS `grupparbete` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_swedish_ci */;
+USE `grupparbete`;
 -- MySQL dump 10.13  Distrib 5.7.17, for Win64 (x86_64)
 --
 -- Host: 127.0.0.1    Database: grupparbete
@@ -292,6 +294,78 @@ SET character_set_client = utf8;
 SET character_set_client = @saved_cs_client;
 
 --
+-- Dumping events for database 'grupparbete'
+--
+
+--
+-- Dumping routines for database 'grupparbete'
+--
+/*!50003 DROP PROCEDURE IF EXISTS `sp_AddProduct` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_AddProduct`(
+	p_name VARCHAR(45),
+    p_price DOUBLE,
+    p_supplier INT,
+    p_quantityinstock INT
+)
+BEGIN
+INSERT INTO products (`name`, `price`, `supplier`, `quantityinstock`)
+VALUES (p_name, p_price, p_supplier, p_quantityinstock);
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `sp_ViewUsersOrders` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_ViewUsersOrders`(
+	p_userID INT
+)
+BEGIN
+SELECT 
+	`t0`.`userID` AS `userID`,
+	`t0`.`orderNumber` AS `orderNumber`,
+	`t0`.`orderDate` AS `orderDate`,
+	`t0`.`orderStatus` AS `orderStatus`,
+	`t0`.`shippedDate` AS `shippedDate`,
+	`t2`.`productNumber` AS `productNumber`,
+	`t2`.`name` AS `name`,
+	`t1`.`quantity` AS `quantity`,
+	`t2`.`price` AS `price`,
+	(`t2`.`price` * `t1`.`quantity`) AS `Total`
+FROM
+	((`orders` `t0`
+	JOIN `orderdetails` `t1` ON ((`t1`.`orderNumber` = `t0`.`orderNumber`)))
+	JOIN `products` `t2` ON ((`t2`.`productNumber` = `t1`.`productNumber`)))
+WHERE
+	(`t0`.`userID` = p_userID)
+ORDER BY
+	(`t0`.`orderNumber`);
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+
+--
 -- Final view structure for view `vw_usertotalordered`
 --
 
@@ -354,4 +428,4 @@ SET character_set_client = @saved_cs_client;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-03-28 16:54:33
+-- Dump completed on 2018-03-29  8:51:24
