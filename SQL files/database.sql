@@ -54,7 +54,7 @@ DROP TABLE IF EXISTS `orderdetails`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `orderdetails` (
   `orderNumber` int(11) NOT NULL,
-  `productNumber` int(11) DEFAULT NULL,
+  `productNumber` int(11) NOT NULL,
   `quantity` int(11) DEFAULT NULL,
   `priceEach` double DEFAULT NULL,
   PRIMARY KEY (`orderNumber`,`productNumber`),
